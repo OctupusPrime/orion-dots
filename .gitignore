@@ -1,0 +1,9 @@
+# JavaScript dependencies
+node_modules/
+
+# Scripts binaries
+bin/
+
+
+# Dev rollup builds
+dist/

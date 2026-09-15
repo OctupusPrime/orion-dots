@@ -1,0 +1,31 @@
+[tools]
+go = "1.27.1"
+node = "24"
+
+[tasks.install]
+description = "Install package dependencies"
+run = """
+npm --prefix tools/fantasticon install
+(cd tools/sun-times && go mod download)
+(cd tools/timezone-at && go mod download)
+"""
+
+[tasks."build:icons"]
+description = "Generate the icon font and icon map"
+run = "npm --prefix tools/fantasticon start"
+
+[tasks."build:sun-times"]
+description = "Build sun-times for x86-64 and ARM64"
+run = """
+mkdir -p bin
+(cd tools/sun-times && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o ../../bin/sun-times-amd64 .)
+(cd tools/sun-times && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o ../../bin/sun-times-arm64 .)
+"""
+
+[tasks."build:timezone-at"]
+description = "Build timezone-at for x86-64 and ARM64"
+run = """
+mkdir -p bin
+(cd tools/timezone-at && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o ../../bin/timezone-at-amd64 .)
+(cd tools/timezone-at && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o ../../bin/timezone-at-arm64 .)
+"""

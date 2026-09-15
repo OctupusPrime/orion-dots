@@ -1,0 +1,15 @@
+{
+  "name": "fantasticon",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "26.5.1",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "fantasticon": "4.1.0"
+  }
+}
