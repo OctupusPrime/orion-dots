@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+#MISE description="Run Quickshell development environment"
+
+set -Eeuo pipefail
+
+case "$(uname -m)" in
+    x86_64)        ARCH="amd64" ;;
+    aarch64|arm64) ARCH="arm64" ;;
+    *)
+        echo "Unsupported architecture" >&2
+        exit 1
+        ;;
+esac
+
+sync_dist() {
+    mkdir -p "./dist/scripts" "./dist/assets" || return "$?"
+
+    cp -a "./quickshell/." "./dist/" || return "$?"
+
+    cp "./bin/sun-times-$ARCH" \
+        "./dist/scripts/sun-times" || return "$?"
+
+    cp "./bin/timezone-at-$ARCH" \
+        "./dist/scripts/timezone-at" || return "$?"
+
+    cp \
+        "./scripts/change-color-theme.sh" \
+        "./scripts/change-timezone.sh" \
+        "./dist/scripts/" || return "$?"
+
+    cp \
+        "./assets/fonts/Geist.ttf" \
+        "./assets/fonts/Icons.json" \
+        "./assets/fonts/Icons.ttf" \
+        "./assets/images/popover-shadow.png" \
+        "./dist/assets/" || return "$?"
+
+    chmod +x \
+        "./dist/scripts/sun-times" \
+        "./dist/scripts/timezone-at" \
+        "./dist/scripts/change-color-theme.sh" \
+        "./dist/scripts/change-timezone.sh"
+}
+
+WATCH_PID=""
+QS_PID=""
+
+startup() {
+    sync_dist || return "$?"
+
+    watchexec \
+        --watch "./quickshell" \
+        --watch "./bin" \
+        --watch "./scripts" \
+        --watch "./assets" \
+        -- sh "$0" __sync &
+    WATCH_PID=$!
+
+    qs -p "./dist" &
+    QS_PID=$!
+}
+
+cleanup() {
+    # Signal both processes before waiting for them.
+    for pid in "$WATCH_PID" "$QS_PID"; do
+        [ -n "$pid" ] && kill -TERM "$pid" 2>/dev/null || :
+    done
+
+    for pid in "$WATCH_PID" "$QS_PID"; do
+        [ -n "$pid" ] && wait "$pid" 2>/dev/null || :
+    done
+}
+
+# Watcher calls only sync_dist(), without starting more processes.
+if [ "${1:-}" = "__sync" ]; then
+    sync_dist
+    exit "$?"
+fi
+
+on_exit() {
+    status=$?
+    trap - 0
+    trap '' INT TERM HUP
+    cleanup
+    exit "$status"
+}
+
+trap on_exit 0
+trap 'exit 130' INT
+trap 'exit 143' TERM
+trap 'exit 129' HUP
+
+startup || exit "$?"
+
+# When Quickshell exits, cleanup also stops the watcher.
+wait "$QS_PID"
+exit "$?"

@@ -1,6 +1,11 @@
+[env]
+PROJECT_NAME = "orion-dots"
+PROJECT_VERSION = "0.0.1"
+
 [tools]
 go = "1.27.1"
 node = "24"
+watchexec = "latest"
 
 [tasks.install]
 description = "Install package dependencies"
@@ -29,3 +34,9 @@ mkdir -p bin
 (cd tools/timezone-at && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o ../../bin/timezone-at-amd64 .)
 (cd tools/timezone-at && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o ../../bin/timezone-at-arm64 .)
 """
+
+[tasks.dev]
+depends = ["build:icons", "build:sun-times", "build:timezone-at"]
+
+[tasks.compile]
+depends = ["build:icons", "build:sun-times", "build:timezone-at"]

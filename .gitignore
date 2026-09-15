@@ -4,6 +4,6 @@ node_modules/
 # Scripts binaries
 bin/
 
-
-# Dev rollup builds
+# Dev builds & releases
 dist/
+release/

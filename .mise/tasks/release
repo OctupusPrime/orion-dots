@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#MISE description="Compile and zip releases for amd64 and arm64"
+
+set -Eeuo pipefail
+
+NAME="${PROJECT_NAME:?PROJECT_NAME is not defined}"
+VERSION="${PROJECT_VERSION:?PROJECT_VERSION is not defined}"
+
+if ! command -v zip >/dev/null 2>&1; then
+    echo "Missing zip: install it with your Linux package manager." >&2
+    exit 1
+fi
+
+mkdir -p "./release"
+
+for arch in amd64 arm64; do
+    mise run compile "$arch"
+
+    folder="${NAME}_${VERSION}_${arch}"
+    archive="./release/${folder}.zip"
+
+    # Recreate the archive to avoid retaining old files.
+    rm -f -- "$archive"
+    zip -qr "$archive" "$folder"
+
+    # Remove the uncompressed folder only after zip succeeds.
+    rm -rf -- "./$folder"
+
+    echo "Created $archive"
+done
