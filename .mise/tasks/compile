@@ -14,17 +14,14 @@ OUT="./${NAME}_${VERSION}_${ARCH}"
 
 rm -rf -- "$OUT"
 mkdir -p \
-    "$OUT/assets" \
     "$OUT/hypr" \
     "$OUT/quickshell/assets" \
     "$OUT/quickshell/scripts"
 
-cp \
-    "./assets/images/light-wallpaper.png" \
-    "./assets/images/dark-wallpaper.png" \
-    "$OUT/assets/"
+cp "./.installer/install.sh" "$OUT/install.sh"
 
 cp -a "./hypr/." "$OUT/hypr/"
+
 cp -a "./quickshell/." "$OUT/quickshell/"
 
 cp \
@@ -46,6 +43,7 @@ cp \
     "$OUT/quickshell/scripts/"
 
 chmod +x \
+    "$OUT/install.sh" \
     "$OUT/quickshell/scripts/sun-times" \
     "$OUT/quickshell/scripts/timezone-at" \
     "$OUT/quickshell/scripts/change-color-theme.sh" \
