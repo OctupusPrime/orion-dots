@@ -1,15 +1,13 @@
 #!/bin/bash
+set -eu
 
 # --- Usage ---
-# ./change-color-theme.sh light [wallpaper-path]
-# ./change-color-theme.sh dark [wallpaper-path]
-# An omitted or empty wallpaper path leaves the wallpaper unchanged.
+# ./change-color-theme.sh light|dark
 
 MODE=${1:-}
-BACKGROUND=${2:-}
 
-if [[ "$MODE" != "light" && "$MODE" != "dark" ]]; then
-    echo "Error: Argument must be 'light' or 'dark'"
+if [[ "$MODE" != "light" && "$MODE" != "dark" ]] || [ "$#" -ne 1 ]; then
+    echo "Usage: $0 light|dark" >&2
     exit 1
 fi
 
@@ -24,9 +22,6 @@ GTK_DARK="Breeze-Dark"
 QT_STYLE="Breeze"
 QT_LIGHT="/usr/share/color-schemes/BreezeLight.colors"
 QT_DARK="/usr/share/color-schemes/BreezeDark.colors"
-
-# Background image
-BACKGROUND_SYMLINK="$HOME/.local/state/orion-dots/wallpaper"
 
 # Function to update qt5ct and qt6ct config files
 update_qt_config() {
@@ -63,20 +58,6 @@ elif [ "$MODE" == "dark" ]; then
     # --- QT ---
     update_qt_config "$QT_DARK"
 
-fi
-
-# Apply wallpaper even when the theme is already active (e.g. settings reload).
-if [[ -n "$BACKGROUND" ]]; then
-    if [[ ! -f "$BACKGROUND" || ! -r "$BACKGROUND" ]]; then
-        echo "Warning: wallpaper is not a readable file: $BACKGROUND" >&2
-    elif [[ -e "$BACKGROUND_SYMLINK" && ! -L "$BACKGROUND_SYMLINK" ]]; then
-        echo "Warning: refusing to replace a non-symlink: $BACKGROUND_SYMLINK" >&2
-    elif hyprctl hyprpaper wallpaper ",${BACKGROUND},cover"; then
-        mkdir -p -- "${BACKGROUND_SYMLINK%/*}" &&
-            ln -sfnT -- "$BACKGROUND" "$BACKGROUND_SYMLINK"
-    else
-        echo "Warning: failed to apply wallpaper: $BACKGROUND" >&2
-    fi
 fi
 
 echo "Theme switch completed."

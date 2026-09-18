@@ -17,9 +17,6 @@ Singleton {
         settingsFile.text();
         return state.values;
     }
-    readonly property bool ready: state.ready
-
-    // DEFAULTS
 
     function defaults() {
         return {
@@ -59,9 +56,8 @@ Singleton {
 
     QtObject {
         id: state
-
+        property bool valuesLoaded: false
         property var values: settings.defaults()
-        property bool ready: false
     }
 
     function isObject(value) {
@@ -106,6 +102,13 @@ Singleton {
 
             // Replace the object to notify bindings; unknown keys are ignored.
             state.values = normalize(data, defaults(), "");
+
+            // Runs when settings.json was changed
+            if (state.valuesLoaded) {
+                triggerWallpaperChange();
+            }
+
+            state.valuesLoaded = true;
         } catch (error) {
             // An incomplete edit must not discard the last valid settings.
             console.warn("Settings: keeping previous values:", error);
@@ -116,18 +119,33 @@ Singleton {
         id: settingsFile
 
         path: settings.configDir + "/orion-dots/settings.json"
+
         blockLoading: true
         watchChanges: true
 
         onFileChanged: reload()
-        onLoaded: {
-            settings.applyText(settingsFile.text());
-            state.ready = true;
-        }
+        onLoaded: settings.applyText(settingsFile.text())
         onLoadFailed: {
             state.values = settings.defaults();
-            state.ready = true;
             console.warn("Settings: unable to read file; using defaults");
         }
+    }
+
+    // SCRIPTS
+
+    function triggerWallpaperChange(): void {
+        if (wallpaperChangeProc.running)
+            return;
+
+        const wallpapers = state.values.wallpaper;
+        const paths = [wallpapers.light, wallpapers.dark].filter(path => !!path);
+
+        wallpaperChangeProc.exec({
+            command: [Quickshell.shellPath("scripts/change-wallpaper.sh"), ...paths]
+        });
+    }
+
+    Process {
+        id: wallpaperChangeProc
     }
 }

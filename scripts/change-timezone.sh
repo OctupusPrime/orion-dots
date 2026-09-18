@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 # --- Usage ---
 # ./change-timezone.sh America/New_York

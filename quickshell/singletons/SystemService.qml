@@ -212,13 +212,30 @@ Singleton {
         return minutes >= sunrise && minutes < sunset ? "light" : "dark";
     }
 
-    function applyTheme(): void {
-        const wallpaper = UserSettings.values.wallpaper[theme] || "";
+    onThemeChanged: Qt.callLater(triggerThemeChange)
 
-        Quickshell.execDetached([Quickshell.shellPath("scripts/change-color-theme.sh"), theme, wallpaper]);
+    function triggerThemeChange(): void {
+        if (themeChangeProc.running)
+            return;
+
+        themeChangeProc.exec({
+            command: [Quickshell.shellPath("scripts/change-color-theme.sh"), theme]
+        });
     }
 
-    onThemeChanged: Qt.callLater(applyTheme)
+    Process {
+        id: themeChangeProc
+
+        onExited: (exitCode, exitStatus) => {
+            if (exitCode !== 0)
+                return;
+
+            const wallpapers = UserSettings.values.wallpaper;
+            const paths = [wallpapers.light, wallpapers.dark].filter(path => !!path);
+
+            Quickshell.execDetached([Quickshell.shellPath("scripts/change-wallpaper.sh"), ...paths]);
+        }
+    }
 
     // POWER
 
