@@ -1,4 +1,4 @@
-module timezone-at
+module tz-lookup
 
 go 1.27.1
 

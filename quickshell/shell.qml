@@ -2,7 +2,28 @@ import Quickshell
 import QtQuick
 import QtQuick.Layouts
 
+import qs.common
+import qs.modules
+
 ShellRoot {
+    FontLoader {
+        id: geistFont
+        source: Qt.resolvedUrl("./assets/Geist.ttf")
+    }
+    FontLoader {
+        id: iconsFont
+        source: Qt.resolvedUrl("./assets/Icons.ttf")
+    }
+
+    Theme {
+        id: theme
+    }
+    Icons {
+        id: iconData
+    }
+
+    readonly property var icons: iconData.values
+
     Variants {
         model: Quickshell.screens
 
@@ -20,15 +41,20 @@ ShellRoot {
                 }
 
                 implicitHeight: 44
-                color: 'black'
+                color: Qt.alpha(theme.background, 0.75)
 
                 RowLayout {
                     spacing: 16
 
                     anchors {
                         verticalCenter: parent.verticalCenter
-                        horizontalCenter: parent.horizontalCenter
+                        right: parent.right
+                        rightMargin: 6
                     }
+
+                    KeyboardModule {}
+
+                    TimeModule {}
                 }
             }
         }

@@ -22,6 +22,8 @@ const icons = Object.fromEntries(
   ]),
 );
 
+// TODO change it to update qml file to decrease fileload dependancy uptime
+
 const json = JSON.stringify(icons, null, 2).replace(
   /[\uE000-\uF8FF]/g,
   (character) => `\\u${character.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")}`,

@@ -11,32 +11,32 @@ watchexec = "latest"
 description = "Install package dependencies"
 run = """
 npm --prefix tools/fantasticon install
-(cd tools/sun-times && go mod download)
-(cd tools/timezone-at && go mod download)
+(cd tools/solar-lookup && go mod download)
+(cd tools/tz-lookup && go mod download)
 """
 
 [tasks."build:icons"]
 description = "Generate the icon font and icon map"
 run = "npm --prefix tools/fantasticon start"
 
-[tasks."build:sun-times"]
-description = "Build sun-times for x86-64 and ARM64"
+[tasks."build:solar-lookup"]
+description = "Build solar-lookup for x86-64 and ARM64"
 run = """
 mkdir -p bin
-(cd tools/sun-times && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o ../../bin/sun-times-amd64 .)
-(cd tools/sun-times && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o ../../bin/sun-times-arm64 .)
+(cd tools/solar-lookup && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o ../../bin/solar-lookup-amd64 .)
+(cd tools/solar-lookup && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o ../../bin/solar-lookup-arm64 .)
 """
 
-[tasks."build:timezone-at"]
-description = "Build timezone-at for x86-64 and ARM64"
+[tasks."build:tz-lookup"]
+description = "Build tz-lookup for x86-64 and ARM64"
 run = """
 mkdir -p bin
-(cd tools/timezone-at && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o ../../bin/timezone-at-amd64 .)
-(cd tools/timezone-at && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o ../../bin/timezone-at-arm64 .)
+(cd tools/tz-lookup && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o ../../bin/tz-lookup-amd64 .)
+(cd tools/tz-lookup && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o ../../bin/tz-lookup-arm64 .)
 """
 
 [tasks.dev]
-depends = ["build:icons", "build:sun-times", "build:timezone-at"]
+depends = ["build:icons", "build:solar-lookup", "build:tz-lookup"]
 
 [tasks.compile]
-depends = ["build:icons", "build:sun-times", "build:timezone-at"]
+depends = ["build:icons", "build:solar-lookup", "build:tz-lookup"]

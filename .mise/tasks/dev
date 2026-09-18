@@ -17,14 +17,15 @@ sync_dist() {
 
     cp -a "./quickshell/." "./dist/" || return "$?"
 
-    cp "./bin/sun-times-$ARCH" \
-        "./dist/scripts/sun-times" || return "$?"
+    cp "./bin/solar-lookup-$ARCH" \
+        "./dist/scripts/solar-lookup" || return "$?"
 
-    cp "./bin/timezone-at-$ARCH" \
-        "./dist/scripts/timezone-at" || return "$?"
+    cp "./bin/tz-lookup-$ARCH" \
+        "./dist/scripts/tz-lookup" || return "$?"
 
     cp \
         "./scripts/change-color-theme.sh" \
+        "./scripts/change-wallpaper.sh" \
         "./scripts/change-timezone.sh" \
         "./dist/scripts/" || return "$?"
 
@@ -36,9 +37,10 @@ sync_dist() {
         "./dist/assets/" || return "$?"
 
     chmod +x \
-        "./dist/scripts/sun-times" \
-        "./dist/scripts/timezone-at" \
+        "./dist/scripts/solar-lookup" \
+        "./dist/scripts/tz-lookup" \
         "./dist/scripts/change-color-theme.sh" \
+        "./dist/scripts/change-wallpaper.sh" \
         "./dist/scripts/change-timezone.sh"
 }
 

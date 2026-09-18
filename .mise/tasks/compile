@@ -31,22 +31,24 @@ cp \
     "./assets/images/popover-shadow.png" \
     "$OUT/quickshell/assets/"
 
-cp "./bin/sun-times-$ARCH" \
-    "$OUT/quickshell/scripts/sun-times"
+cp "./bin/solar-lookup-$ARCH" \
+    "$OUT/quickshell/scripts/solar-lookup"
 
-cp "./bin/timezone-at-$ARCH" \
-    "$OUT/quickshell/scripts/timezone-at"
+cp "./bin/tz-lookup-$ARCH" \
+    "$OUT/quickshell/scripts/tz-lookup"
 
 cp \
     "./scripts/change-color-theme.sh" \
+    "./scripts/change-wallpaper.sh" \
     "./scripts/change-timezone.sh" \
     "$OUT/quickshell/scripts/"
 
 chmod +x \
     "$OUT/install.sh" \
-    "$OUT/quickshell/scripts/sun-times" \
-    "$OUT/quickshell/scripts/timezone-at" \
+    "$OUT/quickshell/scripts/solar-lookup" \
+    "$OUT/quickshell/scripts/tz-lookup" \
     "$OUT/quickshell/scripts/change-color-theme.sh" \
+    "$OUT/quickshell/scripts/change-wallpaper.sh" \
     "$OUT/quickshell/scripts/change-timezone.sh"
 
 echo "Compiled in $OUT"

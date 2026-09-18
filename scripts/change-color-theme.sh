@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # --- Usage ---
-# ./change-color-theme.sh light
-# ./change-color-theme.sh dark
+# ./change-color-theme.sh light [wallpaper-path]
+# ./change-color-theme.sh dark [wallpaper-path]
+# An omitted or empty wallpaper path leaves the wallpaper unchanged.
 
-MODE=$1
+MODE=${1:-}
+BACKGROUND=${2:-}
 
 if [[ "$MODE" != "light" && "$MODE" != "dark" ]]; then
     echo "Error: Argument must be 'light' or 'dark'"
@@ -13,14 +15,6 @@ fi
 
 # Check if already in desired mode
 CURRENT_SCHEME=$(gsettings get org.gnome.desktop.interface color-scheme)
-
-if [[ "$MODE" == "light" && "$CURRENT_SCHEME" == "'prefer-light'" ]]; then
-    echo "Already in Light mode."
-    exit 0
-elif [[ "$MODE" == "dark" && "$CURRENT_SCHEME" == "'prefer-dark'" ]]; then
-    echo "Already in Dark mode."
-    exit 0
-fi
 
 # GTK Theme
 GTK_LIGHT="Breeze"
@@ -32,9 +26,7 @@ QT_LIGHT="/usr/share/color-schemes/BreezeLight.colors"
 QT_DARK="/usr/share/color-schemes/BreezeDark.colors"
 
 # Background image
-BACKGROUND_SYMLINK="$HOME/Pictures/Wallpapers/current_wallpaper"
-BACKGROUND_LIGHT="$HOME/Pictures/Wallpapers/light.png"
-BACKGROUND_DARK="$HOME/Pictures/Wallpapers/dark.png"
+BACKGROUND_SYMLINK="$HOME/.local/state/orion-dots/wallpaper"
 
 # Function to update qt5ct and qt6ct config files
 update_qt_config() {
@@ -49,7 +41,9 @@ update_qt_config() {
     done
 }
 
-if [ "$MODE" == "light" ]; then
+if [[ "$CURRENT_SCHEME" == "'prefer-$MODE'" ]]; then
+    echo "Already in $MODE mode."
+elif [ "$MODE" == "light" ]; then
     echo "Switching to Light Mode..."
 
     # --- GTK ---
@@ -58,10 +52,6 @@ if [ "$MODE" == "light" ]; then
 
     # --- QT ---
     update_qt_config "$QT_LIGHT"
-
-    # --- Background ---
-    hyprctl hyprpaper wallpaper ','"$BACKGROUND_LIGHT"',cover'
-    ln -sf "$BACKGROUND_LIGHT" "$BACKGROUND_SYMLINK"
 
 elif [ "$MODE" == "dark" ]; then
     echo "Switching to Dark Mode..."
@@ -73,10 +63,20 @@ elif [ "$MODE" == "dark" ]; then
     # --- QT ---
     update_qt_config "$QT_DARK"
 
-    # --- Background ---
-    hyprctl hyprpaper wallpaper ','"$BACKGROUND_DARK"',cover'
-    ln -sf "$BACKGROUND_DARK" "$BACKGROUND_SYMLINK"
+fi
 
+# Apply wallpaper even when the theme is already active (e.g. settings reload).
+if [[ -n "$BACKGROUND" ]]; then
+    if [[ ! -f "$BACKGROUND" || ! -r "$BACKGROUND" ]]; then
+        echo "Warning: wallpaper is not a readable file: $BACKGROUND" >&2
+    elif [[ -e "$BACKGROUND_SYMLINK" && ! -L "$BACKGROUND_SYMLINK" ]]; then
+        echo "Warning: refusing to replace a non-symlink: $BACKGROUND_SYMLINK" >&2
+    elif hyprctl hyprpaper wallpaper ",${BACKGROUND},cover"; then
+        mkdir -p -- "${BACKGROUND_SYMLINK%/*}" &&
+            ln -sfnT -- "$BACKGROUND" "$BACKGROUND_SYMLINK"
+    else
+        echo "Warning: failed to apply wallpaper: $BACKGROUND" >&2
+    fi
 fi
 
 echo "Theme switch completed."
