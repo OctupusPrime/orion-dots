@@ -26,7 +26,6 @@ cp -a "./quickshell/." "$OUT/quickshell/"
 
 cp \
     "./assets/fonts/Geist.ttf" \
-    "./assets/fonts/Icons.json" \
     "./assets/fonts/Icons.ttf" \
     "./assets/images/popover-shadow.png" \
     "$OUT/quickshell/assets/"

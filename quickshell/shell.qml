@@ -22,8 +22,6 @@ ShellRoot {
         id: iconData
     }
 
-    readonly property var icons: iconData.values
-
     Variants {
         model: Quickshell.screens
 

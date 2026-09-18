@@ -1,8 +1,35 @@
-import Quickshell.Io
+import QtQuick
 
-FileView {
-    path: Qt.resolvedUrl("../assets/Icons.json")
-    blockLoading: true
-
-    readonly property var values: JSON.parse(text())
+QtObject {
+    readonly property string x: "\uF101"
+    readonly property string wifi: "\uF102"
+    readonly property string wifiZero: "\uF103"
+    readonly property string wifiOff: "\uF104"
+    readonly property string wifiLow: "\uF105"
+    readonly property string wifiHigh: "\uF106"
+    readonly property string volume: "\uF107"
+    readonly property string volumeX: "\uF108"
+    readonly property string volume2: "\uF109"
+    readonly property string volume1: "\uF10A"
+    readonly property string video: "\uF10B"
+    readonly property string videoOff: "\uF10C"
+    readonly property string sun: "\uF10D"
+    readonly property string sunMedium: "\uF10E"
+    readonly property string sunDim: "\uF10F"
+    readonly property string music: "\uF110"
+    readonly property string mic: "\uF111"
+    readonly property string micOff: "\uF112"
+    readonly property string globeOff: "\uF113"
+    readonly property string gamepad2: "\uF114"
+    readonly property string ethernetPort: "\uF115"
+    readonly property string earth: "\uF116"
+    readonly property string chevronUp: "\uF117"
+    readonly property string chevronRight: "\uF118"
+    readonly property string chevronDown: "\uF119"
+    readonly property string check: "\uF11A"
+    readonly property string boxes: "\uF11B"
+    readonly property string bluetooth: "\uF11C"
+    readonly property string bluetoothOff: "\uF11D"
+    readonly property string bluetoothConnected: "\uF11E"
+    readonly property string arch: "\uF11F"
 }

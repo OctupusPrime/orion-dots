@@ -15,22 +15,23 @@ const result = await generateFonts({
   assetTypes: [],
 });
 
-const icons = Object.fromEntries(
-  Object.entries(result.codepoints).map(([name, codepoint]) => [
-    name,
-    String.fromCodePoint(codepoint),
-  ]),
+const properties = Object.entries(result.codepoints).map(([name, codepoint]) => {
+  const propertyName = name.replace(/-([a-z0-9])/g, (_, character: string) =>
+    character.toUpperCase(),
+  );
+  const glyph = String.fromCodePoint(codepoint).replace(
+    /[\s\S]/g,
+    (character) => `\\u${character.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0")}`,
+  );
+
+  return `    readonly property string ${propertyName}: "${glyph}"`;
+});
+
+await writeFile(
+  resolve(rootDir, "quickshell/common/Icons.qml"),
+  `import QtQuick\n\nQtObject {\n${properties.join("\n")}\n}\n`,
 );
-
-// TODO change it to update qml file to decrease fileload dependancy uptime
-
-const json = JSON.stringify(icons, null, 2).replace(
-  /[\uE000-\uF8FF]/g,
-  (character) => `\\u${character.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")}`,
-);
-
-await writeFile(resolve(fontsDir, "Icons.json"), `${json}\n`);
 
 console.log(
-  `Generated ${Object.keys(result.codepoints).length} icons in assets/fonts/Icons.ttf and assets/fonts/Icons.json`,
+  `Generated ${properties.length} icons in assets/fonts/Icons.ttf and quickshell/common/Icons.qml`,
 );

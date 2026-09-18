@@ -31,7 +31,6 @@ sync_dist() {
 
     cp \
         "./assets/fonts/Geist.ttf" \
-        "./assets/fonts/Icons.json" \
         "./assets/fonts/Icons.ttf" \
         "./assets/images/popover-shadow.png" \
         "./dist/assets/" || return "$?"
