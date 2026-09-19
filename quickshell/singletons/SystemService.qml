@@ -39,7 +39,7 @@ Singleton {
 
     // LOCATION
 
-    property string timezone: "UTC"
+    property string timezone: ""
     // New timezone are only commited after tz-change succeeds.
     property string pendingTimezone: ""
 
@@ -154,7 +154,7 @@ Singleton {
     property string solarDate: ""
 
     function triggerSolarLookup(force = false): void {
-        if (!isFinite(systemService.latitude) || !isFinite(systemService.longitude))
+        if (!isFinite(systemService.latitude) || !isFinite(systemService.longitude) || !systemService.timezone)
             return;
 
         if (!force && solarLookupProc.running)
@@ -271,7 +271,7 @@ Singleton {
     }
 
     Timer {
-        interval: 1000
+        interval: 3000
         running: true
 
         onTriggered: {

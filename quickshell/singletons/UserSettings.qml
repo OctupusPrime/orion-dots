@@ -20,6 +20,8 @@ Singleton {
 
     function defaults() {
         return {
+            workspaces: {},
+            tray: {},
             wallpaper: {
                 light: "",
                 dark: ""
@@ -33,6 +35,8 @@ Singleton {
     // value or fallback. Custom validators must also check the value's type.
 
     readonly property var validators: ({
+            "workspaces": readPathMap,
+            "tray": readPathMap,
             "wallpaper.light": readPath,
             "wallpaper.dark": readPath
         })
@@ -50,6 +54,26 @@ Singleton {
 
         console.warn("Settings: invalid " + key + "; using default");
         return fallback;
+    }
+
+    function readPathMap(value, fallback, key) {
+        if (!isObject(value)) {
+            console.warn("Settings: invalid " + key + "; using default");
+            return fallback;
+        }
+
+        const result = {};
+        for (const name of Object.keys(value)) {
+            const path = readPath(value[name], "", key + "." + name);
+            if (path)
+                Object.defineProperty(result, name, {
+                    value: path,
+                    enumerable: true,
+                    writable: true,
+                    configurable: true
+                });
+        }
+        return result;
     }
 
     // LOADER

@@ -36,5 +36,5 @@ ln -sfnT -- "$wallpaper" "$BACKGROUND_SYMLINK"
 hyprctl monitors |
 while IFS=' ' read -r label monitor rest; do
     [ "$label" = "Monitor" ] || continue
-    hyprctl hyprpaper wallpaper "$monitor,$wallpaper"
+    hyprctl hyprpaper wallpaper "$monitor,$wallpaper,cover"
 done

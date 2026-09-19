@@ -19,7 +19,7 @@ ShellRoot {
         id: theme
     }
     Icons {
-        id: iconData
+        id: icons
     }
 
     Variants {
@@ -40,6 +40,21 @@ ShellRoot {
 
                 implicitHeight: 44
                 color: Qt.alpha(theme.background, 0.75)
+
+                RowLayout {
+                    spacing: 16
+
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    SystemMenuModule {}
+
+                    WorkspacesModule {}
+
+                    AppsTrayModule {}
+                }
 
                 RowLayout {
                     spacing: 16
