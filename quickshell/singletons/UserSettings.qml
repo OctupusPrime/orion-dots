@@ -20,6 +20,11 @@ Singleton {
 
     function defaults() {
         return {
+            locale: "en_US",
+            clock: {
+                timeFormat: "HH:mm",
+                dateFormat: "dd/MM/yyyy"
+            },
             workspaces: {},
             tray: {},
             wallpaper: {
@@ -35,11 +40,38 @@ Singleton {
     // value or fallback. Custom validators must also check the value's type.
 
     readonly property var validators: ({
+            "locale": (value, fallback, key) => readChoice(value, fallback, key, ["en_US", "uk_UA"]),
+            "clock.timeFormat": readString,
+            "clock.dateFormat": readString,
             "workspaces": readPathMap,
             "tray": readPathMap,
             "wallpaper.light": readPath,
             "wallpaper.dark": readPath
         })
+
+    function readString(value, fallback, key) {
+        if (typeof value === "string")
+            return value;
+
+        console.warn("Settings: invalid " + key + "; using default");
+        return fallback;
+    }
+
+    function readNumber(value, fallback, key) {
+        if (typeof value === "number" && Number.isFinite(value))
+            return value;
+
+        console.warn("Settings: invalid " + key + "; using default");
+        return fallback;
+    }
+
+    function readChoice(value, fallback, key, choices) {
+        if (typeof value === "string" && choices.includes(value))
+            return value;
+
+        console.warn("Settings: invalid " + key + "; using default");
+        return fallback;
+    }
 
     function readPath(value, fallback, key) {
         if (value === undefined || value === null || value === "")

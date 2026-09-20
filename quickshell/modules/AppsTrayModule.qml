@@ -18,6 +18,8 @@ QsPopover {
 
     property var menuStack: null
 
+    readonly property var trayAppsIcons: UserSettings.values.tray
+
     onOpenedChanged: {
         if (appsTrayModuleRoot.opened)
             return;
@@ -47,8 +49,8 @@ QsPopover {
         }
 
         contentItem: Item {
-            implicitWidth: 36
-            implicitHeight: 36
+            implicitWidth: 34
+            implicitHeight: 34
 
             QsIcon {
                 source: icons.boxes
@@ -354,8 +356,8 @@ QsPopover {
         hoverEnabled: true
 
         function getIconSource(id: string, pathname: string): string {
-            if (Object.prototype.hasOwnProperty.call(UserSettings.values.tray, id)) {
-                return Qt.resolvedUrl(UserSettings.values.tray[id]);
+            if (Object.prototype.hasOwnProperty.call(appsTrayModuleRoot.trayAppsIcons, id)) {
+                return Qt.resolvedUrl(appsTrayModuleRoot.trayAppsIcons[id]);
             }
 
             if (pathname.includes("?path=")) {
@@ -449,7 +451,7 @@ QsPopover {
 
                 size: "sm"
                 variant: "secondary"
-                text: "Back"
+                text: i18n.t("appsTray.back")
                 onClicked: closeSubMenuButtonRoot.clicked()
             }
         }

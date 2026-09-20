@@ -5,6 +5,8 @@ import qs.singletons
 Item {
     id: themeRoot
 
+    required property string theme
+
     property color background
     property color foreground
     property color card
@@ -25,7 +27,7 @@ Item {
     property color input
     property color ring
 
-    state: SystemService.theme
+    state: theme
 
     states: [
         State {

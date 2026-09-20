@@ -2,6 +2,7 @@ import Quickshell
 import QtQuick
 import QtQuick.Layouts
 
+import qs.singletons
 import qs.common
 import qs.modules
 
@@ -15,11 +16,16 @@ ShellRoot {
         source: Qt.resolvedUrl("./assets/Icons.ttf")
     }
 
-    Theme {
-        id: theme
-    }
     Icons {
         id: icons
+    }
+    Theme {
+        id: theme
+        theme: SystemService.theme
+    }
+    I18n {
+        id: i18n
+        language: UserSettings.values.locale
     }
 
     Variants {
@@ -38,11 +44,11 @@ ShellRoot {
                     right: true
                 }
 
-                implicitHeight: 44
+                implicitHeight: 36
                 color: Qt.alpha(theme.background, 0.75)
 
                 RowLayout {
-                    spacing: 16
+                    spacing: 14
 
                     anchors {
                         verticalCenter: parent.verticalCenter
@@ -57,12 +63,12 @@ ShellRoot {
                 }
 
                 RowLayout {
-                    spacing: 16
+                    spacing: 14
 
                     anchors {
                         verticalCenter: parent.verticalCenter
                         right: parent.right
-                        rightMargin: 6
+                        rightMargin: 2
                     }
 
                     KeyboardModule {}

@@ -31,8 +31,8 @@ QsPopover {
         }
 
         contentItem: Item {
-            implicitWidth: 36
-            implicitHeight: 36
+            implicitWidth: 34
+            implicitHeight: 34
 
             QsIcon {
                 source: icons.arch
@@ -46,21 +46,21 @@ QsPopover {
 
         ListElement {
             type: "label"
-            text: "Appearance"
+            textKey: "systemMenu.appearance"
         }
         ListElement {
             type: "appearanceItem"
-            text: "Light"
+            textKey: "systemMenu.light"
             value: "light"
         }
         ListElement {
             type: "appearanceItem"
-            text: "Adaptive"
+            textKey: "systemMenu.adaptive"
             value: "auto"
         }
         ListElement {
             type: "appearanceItem"
-            text: "Dark"
+            textKey: "systemMenu.dark"
             value: "dark"
         }
         ListElement {
@@ -68,25 +68,25 @@ QsPopover {
         }
         ListElement {
             type: "label"
-            text: "System"
+            textKey: "systemMenu.system"
         }
         ListElement {
             type: "item"
-            text: "Sleep mode"
+            textKey: "systemMenu.sleep"
             onClicked: function () {
                 SystemService.sleep();
             }
         }
         ListElement {
             type: "item"
-            text: "Shutdown"
+            textKey: "systemMenu.shutdown"
             onClicked: function () {
                 SystemService.shutdown();
             }
         }
         ListElement {
             type: "item"
-            text: "Restart"
+            textKey: "systemMenu.restart"
             onClicked: function () {
                 SystemService.restart();
             }
@@ -135,7 +135,7 @@ QsPopover {
                         anchors.leftMargin: contentListView.margin
                         anchors.rightMargin: contentListView.margin
 
-                        text: modelData.text
+                        text: i18n.t(modelData.textKey)
                     }
                 }
                 DelegateChoice {
@@ -147,7 +147,7 @@ QsPopover {
                         anchors.leftMargin: contentListView.margin
                         anchors.rightMargin: contentListView.margin
 
-                        text: modelData.text
+                        text: i18n.t(modelData.textKey)
                         onClicked: modelData.onClicked()
                     }
                 }
@@ -160,7 +160,7 @@ QsPopover {
                         anchors.leftMargin: contentListView.margin
                         anchors.rightMargin: contentListView.margin
 
-                        text: modelData.text
+                        text: i18n.t(modelData.textKey)
                         buttonType: 2
                         checkState: SystemService.appearance === modelData.value ? 2 : 0
                         onClicked: {

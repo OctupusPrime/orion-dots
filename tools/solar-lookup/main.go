@@ -9,15 +9,15 @@ import (
 )
 
 const (
-	D2R = math.Pi / 180.0
-	R2D = 180.0 / math.Pi
+	D2R    = math.Pi / 180.0
+	R2D    = 180.0 / math.Pi
 	Zenith = 90.8333
 )
 
 func main() {
-	lng := flag.Float64("lng", 0.0, "Longitude (decimal degrees)")
-	lat := flag.Float64("lat", 0.0, "Latitude (decimal degrees)")
-	tzName := flag.String("tz", "UTC", "Timezone name (e.g., Asia/Shanghai)")
+	lng := flag.Float64("lng", math.NaN(), "Longitude (decimal degrees)")
+	lat := flag.Float64("lat", math.NaN(), "Latitude (decimal degrees)")
+	tzName := flag.String("tz", "", "Timezone name (e.g., Asia/Shanghai)")
 
 	flag.Parse()
 
@@ -28,6 +28,11 @@ func main() {
 
 	if math.IsNaN(*lng) || *lng < -180 || *lng > 180 {
 		fmt.Fprintln(os.Stderr, "Error: invalid --lng")
+		os.Exit(1)
+	}
+
+	if *tzName == "" {
+		fmt.Fprintln(os.Stderr, "Error: --tz must not be empty")
 		os.Exit(1)
 	}
 
@@ -52,7 +57,7 @@ func main() {
 	srLocal := sunriseTime.In(loc)
 	ssLocal := sunsetTime.In(loc)
 
-	fmt.Printf("%s %s\n", srLocal.Format("15:04"), ssLocal.Format("15:04"))
+	fmt.Printf("%d %d\n", srLocal.Hour()*60+srLocal.Minute(), ssLocal.Hour()*60+ssLocal.Minute())
 }
 
 func calculateSolarEvent(date time.Time, lat, lng float64, isSunrise bool) time.Time {
@@ -128,7 +133,7 @@ func calculateSolarEvent(date time.Time, lat, lng float64, isSunrise bool) time.
 
 	// 9. Adjust back to UTC
 	UT := T - lngHour
-	
+
 	// Normalize UT to [0, 24)
 	UT = math.Mod(UT, 24.0)
 	if UT < 0 {

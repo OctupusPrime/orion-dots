@@ -7,16 +7,18 @@ import qs.components
 ColumnLayout {
     id: timeModuleRoot
 
-    spacing: 0
+    readonly property var clockSettings: UserSettings.values.clock
+
+    spacing: -1
 
     QsText {
-        text: SystemService.time
+        text: Qt.formatTime(SystemService.date, clockSettings.timeFormat)
         fontWeight: 600
         Layout.alignment: Qt.AlignRight
     }
 
     QsText {
-        text: SystemService.date
+        text: Qt.formatDate(SystemService.date, clockSettings.dateFormat)
         color: theme.mutedForeground
         fontSize: 12
         fontWeight: 500

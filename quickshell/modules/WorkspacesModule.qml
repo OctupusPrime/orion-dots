@@ -7,7 +7,7 @@ import qs.singletons
 Item {
     id: root
 
-    implicitWidth: 108
+    implicitWidth: 84
     implicitHeight: 24
 
     readonly property int activeWs: HyprlandService.activeWorkspaceId
@@ -20,15 +20,15 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-        spacing: 8
+        spacing: 6
 
         WorkspaceDot {
             wsId: 1
         }
 
         RowLayout {
-            spacing: 8
-            Layout.preferredWidth: root.middleActive ? 76 : 24
+            spacing: 6
+            Layout.preferredWidth: root.middleActive ? 60 : 18
 
             WorkspaceDot {
                 visible: !root.showsIcon
@@ -37,14 +37,14 @@ Item {
 
             Item {
                 visible: root.showsIcon
-                implicitWidth: 24
-                implicitHeight: 24
+                implicitWidth: 22
+                implicitHeight: 22
                 Layout.alignment: Qt.AlignHCenter
 
                 Image {
                     anchors.fill: parent
                     source: root.activeIcon
-                    sourceSize: Qt.size(48, 48)
+                    sourceSize: Qt.size(22, 22)
                     fillMode: Image.PreserveAspectFit
 
                     layer.enabled: true
@@ -77,12 +77,12 @@ Item {
 
         readonly property bool active: root.activeWs === wsId
 
-        height: 8
+        height: 6
         radius: height / 2
         color: theme.foreground
 
         Layout.fillWidth: true
-        Layout.preferredWidth: active ? 60 : 8
+        Layout.preferredWidth: active ? 48 : 6
 
         Behavior on Layout.preferredWidth {
             NumberAnimation {

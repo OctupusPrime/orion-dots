@@ -4,7 +4,7 @@ Text {
     id: textRoot
 
     required property string source
-    property var size: 24
+    property var size: 22
 
     text: source
     font.family: 'Icons'

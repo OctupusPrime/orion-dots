@@ -11,6 +11,8 @@ Singleton {
 
     // TIME
 
+    readonly property date date: systemClock.date
+
     SystemClock {
         id: systemClock
 
@@ -33,9 +35,6 @@ Singleton {
 
         Component.onCompleted: lastTick = date.getTime()
     }
-
-    readonly property string time: Qt.formatTime(systemClock.date, "HH:mm")
-    readonly property string date: Qt.formatDate(systemClock.date, "dd/MM/yyyy")
 
     // LOCATION
 
@@ -151,16 +150,11 @@ Singleton {
     property int sunrise: 480 // Default to 8:00
     property int sunset: 1080 // Default to 18:00
 
-    property string solarDate: ""
-
     function triggerSolarLookup(force = false): void {
         if (!isFinite(systemService.latitude) || !isFinite(systemService.longitude) || !systemService.timezone)
             return;
 
         if (!force && solarLookupProc.running)
-            return;
-
-        if (!force && solarDate === systemService.date)
             return;
 
         solarLookupProc.exec({
@@ -181,22 +175,20 @@ Singleton {
 
             const output = solarLookupStdout.text.trim();
 
-            const match = output.match(/^(\d{1,2}):(\d{2})\s+(\d{1,2}):(\d{2})$/);
+            const match = output.match(/^(\d+)\s+(\d+)$/);
 
             if (!match)
                 return;
 
-            const sunriseH = Number(match[1]);
-            const sunriseM = Number(match[2]);
-            const sunsetH = Number(match[3]);
-            const sunsetM = Number(match[4]);
+            const sunrise = Number(match[1]);
+            const sunset = Number(match[2]);
 
-            if (sunriseH > 23 || sunriseM > 59 || sunsetH > 23 || sunsetM > 59)
+            // Valid minute-of-day range: 00:00–23:59
+            if (sunrise < 0 || sunrise > 1439 || sunset < 0 || sunset > 1439)
                 return;
 
-            systemService.sunrise = sunriseH * 60 + sunriseM;
-            systemService.sunset = sunsetH * 60 + sunsetM;
-            systemService.solarDate = systemService.date;
+            systemService.sunrise = sunrise;
+            systemService.sunset = sunset;
         }
     }
 
@@ -266,7 +258,6 @@ Singleton {
         property alias longitude: systemService.longitude
         property alias sunrise: systemService.sunrise
         property alias sunset: systemService.sunset
-        property alias solarDate: systemService.solarDate
         property alias appearance: systemService.appearance
     }
 
