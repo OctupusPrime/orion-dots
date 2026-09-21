@@ -8,11 +8,19 @@ Item {
     property Component anchor
     property Component content
 
+    property string verticalPosition: "top" // top | bottom | center
+    property string horizontalPosition: "center" // left | center | right
+
+    property real verticalOffset: 0
+    property real horizontalOffset: 0
+
     property bool opened: false
     property bool _isExiting: false
 
     property var activePopup: null
     property bool hasActiveChild: false
+
+    readonly property int shadowOffset: 20
 
     function open(): void {
         popoverRoot.opened = true;
@@ -93,23 +101,27 @@ Item {
                 visible: true
                 color: "transparent"
 
-                implicitWidth: contentContainer.implicitWidth + 40
-                implicitHeight: contentContainer.implicitHeight + 18
+                implicitWidth: contentContainer.implicitWidth + popoverRoot.shadowOffset * 2
+                implicitHeight: contentContainer.implicitHeight + popoverRoot.shadowOffset * 2
 
                 anchor {
-                    window: panel
-                    edges: Edges.Bottom
-                    gravity: Edges.Top
+                    item: anchorLoader
+                    edges: Edges.Top | Edges.Left
+                    gravity: {
+                        const vertical = popoverRoot.verticalPosition === "top" ? Edges.Top : popoverRoot.verticalPosition === "bottom" ? Edges.Bottom : 0;
+                        const horizontal = popoverRoot.horizontalPosition === "left" ? Edges.Right : popoverRoot.horizontalPosition === "right" ? Edges.Left : 0;
+                        return vertical | horizontal;
+                    }
 
                     rect: {
-                        const item = anchorLoader.item;
+                        const shadow = popoverRoot.shadowOffset;
+                        const x = popoverRoot.horizontalPosition === "left" ? -shadow : popoverRoot.horizontalPosition === "right" ? anchorLoader.width + shadow : anchorLoader.width / 2;
+                        const y = popoverRoot.verticalPosition === "top" ? shadow : popoverRoot.verticalPosition === "bottom" ? anchorLoader.height - shadow : anchorLoader.height / 2;
 
-                        if (!item)
-                            return Qt.rect(0, 0, 0, 0);
+                        const offsetX = popoverRoot.horizontalOffset * (popoverRoot.horizontalPosition === "left" ? -1 : 1);
+                        const offsetY = popoverRoot.verticalOffset * (popoverRoot.verticalPosition === "top" ? -1 : 1);
 
-                        const pos = item.mapToItem(panel.contentItem, 0, 0);
-
-                        return Qt.rect(pos.x, 0, item.width, 0);
+                        return Qt.rect(x + offsetX, y + offsetY, 1, 1);
                     }
                 }
 
@@ -142,7 +154,7 @@ Item {
                     scale: 0.95
 
                     anchors.centerIn: parent
-                    transformOrigin: Item.Bottom
+                    transformOrigin: popoverRoot.verticalPosition === "top" ? Item.Bottom : popoverRoot.verticalPosition === "bottom" ? Item.Top : Item.Center
 
                     LazyLoader {
                         id: contentLoader

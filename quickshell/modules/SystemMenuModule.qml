@@ -7,6 +7,8 @@ import qs.components
 QsPopover {
     id: systemMenuModuleRoot
 
+    verticalOffset: 8
+
     property real maxWidth: 148
     property real maxHeight: Screen.height * 0.6
 

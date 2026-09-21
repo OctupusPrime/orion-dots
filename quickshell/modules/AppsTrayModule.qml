@@ -10,6 +10,8 @@ import qs.singletons
 QsPopover {
     id: appsTrayModuleRoot
 
+    verticalOffset: 8
+
     property real maxWidth: 184
     property real maxHeight: Screen.height * 0.6
 

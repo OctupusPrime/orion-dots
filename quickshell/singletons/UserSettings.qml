@@ -25,6 +25,9 @@ Singleton {
                 timeFormat: "HH:mm",
                 dateFormat: "dd/MM/yyyy"
             },
+            appearance: {
+                position: "bottom"
+            },
             workspaces: {},
             tray: {},
             wallpaper: {
@@ -43,6 +46,7 @@ Singleton {
             "locale": (value, fallback, key) => readChoice(value, fallback, key, ["en_US", "uk_UA"]),
             "clock.timeFormat": readString,
             "clock.dateFormat": readString,
+            "appearance.position": (value, fallback, key) => readChoice(value, fallback, key, ["top", "botttom", "left", "right"]),
             "workspaces": readPathMap,
             "tray": readPathMap,
             "wallpaper.light": readPath,
