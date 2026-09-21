@@ -37,12 +37,16 @@ Item {
 
             Item {
                 visible: root.showsIcon
-                implicitWidth: 22
+                implicitWidth: 26
                 implicitHeight: 22
                 Layout.alignment: Qt.AlignHCenter
 
                 Image {
-                    anchors.fill: parent
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 22
+                    height: 22
+
                     source: root.activeIcon
                     sourceSize: Qt.size(22, 22)
                     fillMode: Image.PreserveAspectFit
