@@ -19,13 +19,17 @@ ShellRoot {
     Icons {
         id: icons
     }
+    I18n {
+        id: i18n
+        language: UserSettings.values.locale
+    }
     Theme {
         id: theme
         theme: SystemService.theme
     }
-    I18n {
-        id: i18n
-        language: UserSettings.values.locale
+    Position {
+        id: shellPosition
+        position: UserSettings.values.appearance.position
     }
 
     Variants {
@@ -36,44 +40,80 @@ ShellRoot {
                 id: panel
 
                 required property var modelData
+                readonly property bool isRow: shellPosition.direction === "row"
+
                 screen: modelData
 
                 anchors {
-                    bottom: true
-                    left: true
-                    right: true
+                    top: shellPosition.shell.top
+                    bottom: shellPosition.shell.bottom
+                    left: shellPosition.shell.left
+                    right: shellPosition.shell.right
                 }
 
-                implicitHeight: 36
+                width: 36
+                height: 36
+
                 color: Qt.alpha(theme.background, 0.75)
 
-                RowLayout {
-                    spacing: 14
+                GridLayout {
+                    id: leftContents
+
+                    columns: panel.isRow ? Math.max(1, visibleChildren.length) : 1
+                    rowSpacing: 14
+                    columnSpacing: 14
 
                     anchors {
-                        verticalCenter: parent.verticalCenter
-                        horizontalCenter: parent.horizontalCenter
+                        verticalCenter: panel.isRow ? parent.verticalCenter : undefined
+                        horizontalCenter: panel.isRow ? undefined : parent.horizontalCenter
+                        left: panel.isRow ? parent.left : undefined
+                        top: panel.isRow ? undefined : parent.top
+                        leftMargin: 2
+                        topMargin: 2
                     }
-
-                    SystemMenuModule {}
-
-                    WorkspacesModule {}
-
-                    AppsTrayModule {}
                 }
 
-                RowLayout {
-                    spacing: 14
+                GridLayout {
+                    columns: panel.isRow ? 3 : 1
+                    rowSpacing: 14
+                    columnSpacing: 14
 
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        right: parent.right
-                        rightMargin: 2
+                    anchors.centerIn: parent
+
+                    SystemMenuModule {
+                        Layout.alignment: Qt.AlignCenter
                     }
 
-                    KeyboardModule {}
+                    WorkspacesModule {
+                        Layout.alignment: Qt.AlignCenter
+                    }
 
-                    TimeModule {}
+                    AppsTrayModule {
+                        Layout.alignment: Qt.AlignCenter
+                    }
+                }
+
+                GridLayout {
+                    columns: panel.isRow ? 2 : 1
+                    rowSpacing: 14
+                    columnSpacing: 14
+
+                    anchors {
+                        verticalCenter: panel.isRow ? parent.verticalCenter : undefined
+                        horizontalCenter: panel.isRow ? undefined : parent.horizontalCenter
+                        right: panel.isRow ? parent.right : undefined
+                        bottom: panel.isRow ? undefined : parent.bottom
+                        rightMargin: 2
+                        bottomMargin: 2
+                    }
+
+                    KeyboardModule {
+                        Layout.alignment: Qt.AlignCenter
+                    }
+
+                    TimeModule {
+                        Layout.alignment: Qt.AlignCenter
+                    }
                 }
             }
         }

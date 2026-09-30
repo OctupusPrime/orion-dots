@@ -21,10 +21,6 @@ Singleton {
     function defaults() {
         return {
             locale: "en_US",
-            clock: {
-                timeFormat: "HH:mm",
-                dateFormat: "dd/MM/yyyy"
-            },
             appearance: {
                 position: "bottom"
             },
@@ -44,9 +40,7 @@ Singleton {
 
     readonly property var validators: ({
             "locale": (value, fallback, key) => readChoice(value, fallback, key, ["en_US", "uk_UA"]),
-            "clock.timeFormat": readString,
-            "clock.dateFormat": readString,
-            "appearance.position": (value, fallback, key) => readChoice(value, fallback, key, ["top", "botttom", "left", "right"]),
+            "appearance.position": (value, fallback, key) => readChoice(value, fallback, key, ["top", "bottom", "left", "right"]),
             "workspaces": readPathMap,
             "tray": readPathMap,
             "wallpaper.light": readPath,

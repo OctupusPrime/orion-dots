@@ -7,8 +7,15 @@ import qs.singletons
 Item {
     id: root
 
-    implicitWidth: 84
-    implicitHeight: 24
+    readonly property bool isRow: shellPosition.direction === "row"
+
+    property bool animationsReady: false
+    Component.onCompleted: Qt.callLater(() => {
+        root.animationsReady = true;
+    })
+
+    implicitWidth: isRow ? 84 : 24
+    implicitHeight: isRow ? 24 : 84
 
     readonly property int activeWs: HyprlandService.activeWorkspaceId
     readonly property bool middleActive: activeWs === 2 || activeWs === 3
@@ -18,17 +25,23 @@ Item {
     readonly property string activeIcon: workspaceIcons[activeWs] ?? ""
     readonly property bool showsIcon: activeIcon !== ""
 
-    RowLayout {
+    GridLayout {
         anchors.fill: parent
-        spacing: 6
+        columns: root.isRow ? 3 : 1
+        rowSpacing: 6
+        columnSpacing: 6
 
         WorkspaceDot {
             wsId: 1
         }
 
-        RowLayout {
-            spacing: 6
-            Layout.preferredWidth: root.middleActive ? 60 : 18
+        GridLayout {
+            columns: root.isRow ? 3 : 1
+            rowSpacing: 6
+            columnSpacing: 6
+            Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: root.isRow ? (root.middleActive ? 60 : 18) : -1
+            Layout.preferredHeight: root.isRow ? -1 : (root.middleActive ? 60 : 18)
 
             WorkspaceDot {
                 visible: !root.showsIcon
@@ -37,9 +50,9 @@ Item {
 
             Item {
                 visible: root.showsIcon
-                implicitWidth: 26
-                implicitHeight: 22
-                Layout.alignment: Qt.AlignHCenter
+                implicitWidth: root.isRow ? 26 : 22
+                implicitHeight: root.isRow ? 22 : 26
+                Layout.alignment: Qt.AlignCenter
 
                 Image {
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -65,6 +78,16 @@ Item {
             }
 
             Behavior on Layout.preferredWidth {
+                enabled: root.animationsReady && root.isRow
+
+                NumberAnimation {
+                    duration: 150
+                }
+            }
+
+            Behavior on Layout.preferredHeight {
+                enabled: root.animationsReady && !root.isRow
+
                 NumberAnimation {
                     duration: 150
                 }
@@ -81,14 +104,28 @@ Item {
 
         readonly property bool active: root.activeWs === wsId
 
-        height: 6
-        radius: height / 2
+        implicitWidth: 6
+        implicitHeight: 6
+        radius: Math.min(width, height) / 2
         color: theme.foreground
 
-        Layout.fillWidth: true
-        Layout.preferredWidth: active ? 48 : 6
+        Layout.alignment: Qt.AlignCenter
+        Layout.fillWidth: root.isRow
+        Layout.fillHeight: !root.isRow
+        Layout.preferredWidth: root.isRow && active ? 48 : 6
+        Layout.preferredHeight: !root.isRow && active ? 48 : 6
 
         Behavior on Layout.preferredWidth {
+            enabled: root.animationsReady && root.isRow
+
+            NumberAnimation {
+                duration: 150
+            }
+        }
+
+        Behavior on Layout.preferredHeight {
+            enabled: root.animationsReady && !root.isRow
+
             NumberAnimation {
                 duration: 150
             }

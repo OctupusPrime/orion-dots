@@ -7,18 +7,20 @@ import qs.components
 ColumnLayout {
     id: timeModuleRoot
 
-    readonly property var clockSettings: UserSettings.values.clock
+    readonly property bool isRow: shellPosition.direction === "row"
 
-    spacing: -1
+    spacing: -2
 
     QsText {
-        text: Qt.formatTime(SystemService.date, clockSettings.timeFormat)
+        text: Qt.formatTime(SystemService.date, timeModuleRoot.isRow ? "HH:mm" : "HH\nmm")
         fontWeight: 600
-        Layout.alignment: Qt.AlignRight
+        horizontalAlignment: timeModuleRoot.isRow ? Text.AlignRight : Text.AlignHCenter
+        Layout.alignment: timeModuleRoot.isRow ? Qt.AlignRight : Qt.AlignHCenter
     }
 
     QsText {
-        text: Qt.formatDate(SystemService.date, clockSettings.dateFormat)
+        visible: timeModuleRoot.isRow
+        text: Qt.formatDate(SystemService.date, "dd/MM/yyyy")
         color: theme.mutedForeground
         fontSize: 12
         fontWeight: 500
