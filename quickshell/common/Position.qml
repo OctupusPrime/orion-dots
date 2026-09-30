@@ -4,6 +4,8 @@ Item {
     id: positionRoot
 
     required property string position
+    property real popoverOffset: 8
+
     property string direction: "row"
 
     readonly property QtObject shell: QtObject {
@@ -16,8 +18,7 @@ Item {
     readonly property QtObject popover: QtObject {
         property string vertical: "top"
         property string horizontal: "center"
-        property real verticalOffset: 8
-        property real horizontalOffset: 0
+        property real offset: positionRoot.popoverOffset
     }
 
     state: position
@@ -43,8 +44,6 @@ Item {
                 target: positionRoot.popover
                 vertical: "bottom"
                 horizontal: "center"
-                verticalOffset: 8
-                horizontalOffset: 0
             }
         },
         State {
@@ -67,8 +66,6 @@ Item {
                 target: positionRoot.popover
                 vertical: "top"
                 horizontal: "center"
-                verticalOffset: 8
-                horizontalOffset: 0
             }
         },
         State {
@@ -91,8 +88,6 @@ Item {
                 target: positionRoot.popover
                 vertical: "center"
                 horizontal: "right"
-                verticalOffset: 0
-                horizontalOffset: 8
             }
         },
         State {
@@ -115,8 +110,6 @@ Item {
                 target: positionRoot.popover
                 vertical: "center"
                 horizontal: "left"
-                verticalOffset: 0
-                horizontalOffset: 8
             }
         }
     ]

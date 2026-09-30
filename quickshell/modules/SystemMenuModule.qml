@@ -8,6 +8,7 @@ QsPopover {
     id: systemMenuModuleRoot
 
     position: shellPosition.popover
+    animateFrom: shellPosition.position
 
     property real maxWidth: 148
     property real maxHeight: Screen.height * 0.6

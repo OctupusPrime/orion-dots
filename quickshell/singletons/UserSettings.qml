@@ -22,7 +22,8 @@ Singleton {
         return {
             locale: "en_US",
             appearance: {
-                position: "bottom"
+                position: "bottom",
+                popoverOffset: 8
             },
             workspaces: {},
             tray: {},
@@ -41,6 +42,7 @@ Singleton {
     readonly property var validators: ({
             "locale": (value, fallback, key) => readChoice(value, fallback, key, ["en_US", "uk_UA"]),
             "appearance.position": (value, fallback, key) => readChoice(value, fallback, key, ["top", "bottom", "left", "right"]),
+            "appearance.popoverOffset": readNumber,
             "workspaces": readPathMap,
             "tray": readPathMap,
             "wallpaper.light": readPath,

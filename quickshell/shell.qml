@@ -30,6 +30,7 @@ ShellRoot {
     Position {
         id: shellPosition
         position: UserSettings.values.appearance.position
+        popoverOffset: UserSettings.values.appearance.popoverOffset
     }
 
     Variants {
@@ -51,8 +52,8 @@ ShellRoot {
                     right: shellPosition.shell.right
                 }
 
-                width: 36
-                height: 36
+                implicitWidth: 36
+                implicitHeight: 36
 
                 color: Qt.alpha(theme.background, 0.75)
 
