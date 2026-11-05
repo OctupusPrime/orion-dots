@@ -16,8 +16,8 @@ Item {
     }
 
     readonly property QtObject popover: QtObject {
-        property string vertical: "top"
-        property string horizontal: "center"
+        property string anchor: "top"
+        property string alignment: "center"
         property real offset: positionRoot.popoverOffset
     }
 
@@ -42,8 +42,7 @@ Item {
 
             PropertyChanges {
                 target: positionRoot.popover
-                vertical: "bottom"
-                horizontal: "center"
+                anchor: "bottom"
             }
         },
         State {
@@ -64,8 +63,7 @@ Item {
 
             PropertyChanges {
                 target: positionRoot.popover
-                vertical: "top"
-                horizontal: "center"
+                anchor: "top"
             }
         },
         State {
@@ -86,8 +84,7 @@ Item {
 
             PropertyChanges {
                 target: positionRoot.popover
-                vertical: "center"
-                horizontal: "right"
+                anchor: "right"
             }
         },
         State {
@@ -108,8 +105,7 @@ Item {
 
             PropertyChanges {
                 target: positionRoot.popover
-                vertical: "center"
-                horizontal: "left"
+                anchor: "left"
             }
         }
     ]

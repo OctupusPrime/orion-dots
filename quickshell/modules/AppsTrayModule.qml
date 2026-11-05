@@ -13,9 +13,51 @@ QsPopover {
     position: shellPosition.popover
     animateFrom: shellPosition.position
 
-    readonly property bool isSideShell: shellPosition.position === "left" || shellPosition.position === "right"
-    readonly property bool isTopShell: shellPosition.position === "top"
-    readonly property bool isRightShell: shellPosition.position === "right"
+    readonly property var trayPosition: {
+        switch (shellPosition.position) {
+        case "top":
+            return {
+                isSide: false,
+                menuRow: 1,
+                menuColumn: 0,
+                appsRow: 0,
+                appsColumn: 0,
+                origin: Item.Top,
+                alignment: Qt.AlignTop
+            };
+        case "left":
+            return {
+                isSide: true,
+                menuRow: 0,
+                menuColumn: 1,
+                appsRow: 0,
+                appsColumn: 0,
+                origin: Item.Left,
+                alignment: Qt.AlignVCenter
+            };
+        case "right":
+            return {
+                isSide: true,
+                menuRow: 0,
+                menuColumn: 0,
+                appsRow: 0,
+                appsColumn: 1,
+                origin: Item.Right,
+                alignment: Qt.AlignVCenter
+            };
+        case "bottom":
+        default:
+            return {
+                isSide: false,
+                menuRow: 0,
+                menuColumn: 0,
+                appsRow: 1,
+                appsColumn: 0,
+                origin: Item.Bottom,
+                alignment: Qt.AlignBottom
+            };
+        }
+    }
     property real spacing: position.offset
 
     property real maxWidth: 184
@@ -67,13 +109,10 @@ QsPopover {
         }
     }
 
-    content: Item {
-        id: trayContent
-
-        readonly property real gap: Math.max(0, appsTrayModuleRoot.spacing)
-
-        implicitWidth: appsTrayModuleRoot.isSideShell ? appsList.implicitWidth + gap + trayMenuStackView.implicitWidth : Math.max(appsList.implicitWidth, trayMenuStackView.implicitWidth)
-        implicitHeight: appsTrayModuleRoot.isSideShell ? Math.max(appsList.implicitHeight, trayMenuStackView.implicitHeight) : appsList.implicitHeight + gap + trayMenuStackView.implicitHeight
+    content: GridLayout {
+        columns: appsTrayModuleRoot.trayPosition.isSide ? 2 : 1
+        rowSpacing: Math.max(0, appsTrayModuleRoot.spacing)
+        columnSpacing: rowSpacing
 
         StackView {
             id: trayMenuStackView
@@ -81,8 +120,9 @@ QsPopover {
             implicitWidth: appsTrayModuleRoot.maxWidth
             implicitHeight: appsTrayModuleRoot.maxHeight
 
-            x: appsTrayModuleRoot.isSideShell ? (appsTrayModuleRoot.isRightShell ? 0 : appsList.width + trayContent.gap) : (trayContent.width - width) / 2
-            y: appsTrayModuleRoot.isSideShell ? (trayContent.height - height) / 2 : (appsTrayModuleRoot.isTopShell ? appsList.height + trayContent.gap : 0)
+            Layout.row: appsTrayModuleRoot.trayPosition.menuRow
+            Layout.column: appsTrayModuleRoot.trayPosition.menuColumn
+            Layout.alignment: Qt.AlignCenter
 
             replaceEnter: null
             replaceExit: Transition {
@@ -103,16 +143,15 @@ QsPopover {
         }
 
         Item {
-            id: appsList
-
             property int margin: 4
             property int minSize: 32
 
             implicitWidth: Math.max(minSize, appsGridContainer.implicitWidth) + (margin * 2)
             implicitHeight: Math.max(minSize, appsGridContainer.implicitHeight) + (margin * 2)
 
-            x: appsTrayModuleRoot.isSideShell ? (appsTrayModuleRoot.isRightShell ? trayMenuStackView.width + trayContent.gap : 0) : (trayContent.width - width) / 2
-            y: appsTrayModuleRoot.isSideShell ? (trayContent.height - height) / 2 : (appsTrayModuleRoot.isTopShell ? 0 : trayMenuStackView.height + trayContent.gap)
+            Layout.row: appsTrayModuleRoot.trayPosition.appsRow
+            Layout.column: appsTrayModuleRoot.trayPosition.appsColumn
+            Layout.alignment: Qt.AlignCenter
 
             QsPopover.Background {}
 
@@ -125,7 +164,7 @@ QsPopover {
 
                 anchors.fill: parent
                 anchors.margins: parent.margin
-                columns: appsTrayModuleRoot.isSideShell ? 1 : Math.max(1, appsGridRepeater.count)
+                columns: appsTrayModuleRoot.trayPosition.isSide ? 1 : Math.max(1, appsGridRepeater.count)
                 spacing: 4
 
                 Repeater {
@@ -168,10 +207,10 @@ QsPopover {
                 readonly property bool hasContent: traySubMenuStack.currentItem && traySubMenuStack.currentItem.implicitHeight > 0
 
                 implicitHeight: hasContent ? traySubMenuStack.currentItem.implicitHeight : 0
-                transformOrigin: appsTrayModuleRoot.isSideShell ? (appsTrayModuleRoot.isRightShell ? Item.Right : Item.Left) : (appsTrayModuleRoot.isTopShell ? Item.Top : Item.Bottom)
+                transformOrigin: appsTrayModuleRoot.trayPosition.origin
                 opacity: 0
                 scale: 0.95
-                Layout.alignment: appsTrayModuleRoot.isSideShell ? Qt.AlignVCenter : (appsTrayModuleRoot.isTopShell ? Qt.AlignTop : Qt.AlignBottom)
+                Layout.alignment: appsTrayModuleRoot.trayPosition.alignment
                 Layout.fillWidth: true
 
                 states: [

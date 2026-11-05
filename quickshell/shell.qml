@@ -65,13 +65,37 @@ ShellRoot {
                     columnSpacing: 14
 
                     anchors {
-                        verticalCenter: panel.isRow ? parent.verticalCenter : undefined
-                        horizontalCenter: panel.isRow ? undefined : parent.horizontalCenter
-                        left: panel.isRow ? parent.left : undefined
-                        top: panel.isRow ? undefined : parent.top
                         leftMargin: 2
                         topMargin: 2
                     }
+
+                    // Apply anchors together so changing orientation cannot stretch the grid.
+                    state: panel.isRow ? "row" : "column"
+
+                    states: [
+                        State {
+                            name: "row"
+
+                            AnchorChanges {
+                                target: leftContents
+                                anchors.verticalCenter: leftContents.parent.verticalCenter
+                                anchors.horizontalCenter: undefined
+                                anchors.left: leftContents.parent.left
+                                anchors.top: undefined
+                            }
+                        },
+                        State {
+                            name: "column"
+
+                            AnchorChanges {
+                                target: leftContents
+                                anchors.verticalCenter: undefined
+                                anchors.horizontalCenter: leftContents.parent.horizontalCenter
+                                anchors.left: undefined
+                                anchors.top: leftContents.parent.top
+                            }
+                        }
+                    ]
                 }
 
                 GridLayout {
@@ -95,18 +119,43 @@ ShellRoot {
                 }
 
                 GridLayout {
+                    id: rightContents
+
                     columns: panel.isRow ? 2 : 1
                     rowSpacing: 14
                     columnSpacing: 14
 
                     anchors {
-                        verticalCenter: panel.isRow ? parent.verticalCenter : undefined
-                        horizontalCenter: panel.isRow ? undefined : parent.horizontalCenter
-                        right: panel.isRow ? parent.right : undefined
-                        bottom: panel.isRow ? undefined : parent.bottom
                         rightMargin: 2
                         bottomMargin: 2
                     }
+
+                    state: panel.isRow ? "row" : "column"
+
+                    states: [
+                        State {
+                            name: "row"
+
+                            AnchorChanges {
+                                target: rightContents
+                                anchors.verticalCenter: rightContents.parent.verticalCenter
+                                anchors.horizontalCenter: undefined
+                                anchors.right: rightContents.parent.right
+                                anchors.bottom: undefined
+                            }
+                        },
+                        State {
+                            name: "column"
+
+                            AnchorChanges {
+                                target: rightContents
+                                anchors.verticalCenter: undefined
+                                anchors.horizontalCenter: rightContents.parent.horizontalCenter
+                                anchors.right: undefined
+                                anchors.bottom: rightContents.parent.bottom
+                            }
+                        }
+                    ]
 
                     KeyboardModule {
                         Layout.alignment: Qt.AlignCenter

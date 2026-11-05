@@ -11,8 +11,8 @@ Item {
     property string animateFrom: "bottom" // top | bottom | left | right | center
 
     property QtObject position: QtObject {
-        property string vertical: "top" // top | bottom | center
-        property string horizontal: "center" // left | center | right
+        property string anchor: "top" // left | right | top | bottom
+        property string alignment: "center" // start | center | end
         property real offset: 8
     }
 
@@ -103,56 +103,75 @@ Item {
                 visible: true
                 color: "transparent"
 
-                readonly property bool isHorizontalShell: popoverRoot.position.vertical !== "center"
-                property point anchorPosition: Qt.point(0, 0)
+                readonly property var anchorWindow: anchorLoader.QsWindow.window
+                readonly property bool isSideAnchor: popoverRoot.position.anchor === "left" || popoverRoot.position.anchor === "right"
+                readonly property point anchorPosition: {
+                    // Coordinate mapping is not reactive; watch the entire path to the trigger.
+                    anchorTransform.transform;
+                    return anchorLoader.mapToItem(anchorTransform.a, 0, 0);
+                }
+
+                TransformWatcher {
+                    id: anchorTransform
+
+                    a: anchorLoader.QsWindow.contentItem
+                    b: anchorLoader
+                }
+
+                // Start/end mean left/right for top/bottom, and top/bottom for left/right.
+                function alignedCoordinate(start: real, anchorSize: real, contentSize: real, availableSize: real): real {
+                    let coordinate = start;
+                    if (popoverRoot.position.alignment === "end")
+                        coordinate += anchorSize - contentSize;
+                    else if (popoverRoot.position.alignment === "center")
+                        coordinate += (anchorSize - contentSize) / 2;
+
+                    return Math.max(popoverRoot.position.offset, Math.min(coordinate, availableSize - contentSize - popoverRoot.position.offset));
+                }
 
                 readonly property rect contentRect: {
-                    const shell = anchorLoader.QsWindow.window;
-                    if (!shell)
+                    if (!anchorWindow)
                         return Qt.rect(0, 0, 0, 0);
 
-                    const offset = Math.max(0, popoverRoot.position.offset);
-                    const width = contentContainer.implicitWidth;
-                    const height = contentContainer.implicitHeight;
-                    let x = anchorPosition.x + (anchorLoader.width - width) / 2;
-                    let y = anchorPosition.y + (anchorLoader.height - height) / 2;
+                    const width = contentContainer.width;
+                    const height = contentContainer.height;
+                    let x = alignedCoordinate(anchorPosition.x, anchorLoader.width, width, anchorWindow.width);
+                    let y = alignedCoordinate(anchorPosition.y, anchorLoader.height, height, anchorWindow.height);
 
-                    if (isHorizontalShell) {
-                        if (popoverRoot.position.horizontal === "left")
-                            x = anchorPosition.x;
-                        else if (popoverRoot.position.horizontal === "right")
-                            x = anchorPosition.x + anchorLoader.width - width;
-
-                        // Keep the visible content the same distance from either screen edge.
-                        x = Math.max(offset, Math.min(x, shell.width - width - offset));
-                        y = popoverRoot.position.vertical === "top" ? -height - offset : shell.height + offset;
-                    } else {
-                        x = popoverRoot.position.horizontal === "left" ? -width - offset : shell.width + offset;
-                        y = Math.max(offset, Math.min(y, shell.height - height - offset));
+                    // Keep the gap relative to the panel edge, independent of the trigger size.
+                    switch (popoverRoot.position.anchor) {
+                    case "left":
+                        x = -width - popoverRoot.position.offset;
+                        break;
+                    case "right":
+                        x = anchorWindow.width + popoverRoot.position.offset;
+                        break;
+                    case "top":
+                        y = -height - popoverRoot.position.offset;
+                        break;
+                    case "bottom":
+                        y = anchorWindow.height + popoverRoot.position.offset;
+                        break;
                     }
 
                     return Qt.rect(x, y, width, height);
                 }
 
                 // Trim only the shadow padding that would extend past a screen edge.
-                readonly property real leftPadding: isHorizontalShell ? Math.min(popoverRoot.shadowOffset, Math.max(0, contentRect.x)) : popoverRoot.shadowOffset
-                readonly property real rightPadding: isHorizontalShell ? Math.min(popoverRoot.shadowOffset, Math.max(0, (anchorLoader.QsWindow.window?.width ?? 0) - contentRect.x - contentRect.width)) : popoverRoot.shadowOffset
-                readonly property real topPadding: isHorizontalShell ? popoverRoot.shadowOffset : Math.min(popoverRoot.shadowOffset, Math.max(0, contentRect.y))
-                readonly property real bottomPadding: isHorizontalShell ? popoverRoot.shadowOffset : Math.min(popoverRoot.shadowOffset, Math.max(0, (anchorLoader.QsWindow.window?.height ?? 0) - contentRect.y - contentRect.height))
+                readonly property real leftPadding: isSideAnchor ? popoverRoot.shadowOffset : Math.min(popoverRoot.shadowOffset, Math.max(0, contentRect.x))
+                readonly property real rightPadding: isSideAnchor ? popoverRoot.shadowOffset : Math.min(popoverRoot.shadowOffset, Math.max(0, (anchorWindow?.width ?? 0) - contentRect.x - contentRect.width))
+                readonly property real topPadding: isSideAnchor ? Math.min(popoverRoot.shadowOffset, Math.max(0, contentRect.y)) : popoverRoot.shadowOffset
+                readonly property real bottomPadding: isSideAnchor ? Math.min(popoverRoot.shadowOffset, Math.max(0, (anchorWindow?.height ?? 0) - contentRect.y - contentRect.height)) : popoverRoot.shadowOffset
 
-                implicitWidth: contentContainer.implicitWidth + leftPadding + rightPadding
-                implicitHeight: contentContainer.implicitHeight + topPadding + bottomPadding
+                implicitWidth: contentContainer.width + leftPadding + rightPadding
+                implicitHeight: contentContainer.height + topPadding + bottomPadding
 
                 anchor {
-                    window: anchorLoader.QsWindow.window
+                    window: popoverPopup.anchorWindow
                     edges: Edges.Top | Edges.Left
                     gravity: Edges.Bottom | Edges.Right
-                    adjustment: popoverPopup.isHorizontalShell ? PopupAdjustment.SlideY : PopupAdjustment.SlideX
+                    adjustment: popoverPopup.isSideAnchor ? PopupAdjustment.SlideX : PopupAdjustment.SlideY
                     rect: Qt.rect(popoverPopup.contentRect.x - popoverPopup.leftPadding, popoverPopup.contentRect.y - popoverPopup.topPadding, 1, 1)
-
-                    onAnchoring: {
-                        popoverPopup.anchorPosition = anchorLoader.mapToItem(anchorLoader.QsWindow.contentItem, 0, 0);
-                    }
                 }
 
                 Component.onCompleted: popoverRoot.activePopup = popoverPopup
@@ -176,8 +195,9 @@ Item {
 
                     readonly property bool contentReady: contentLoader.item !== null
 
-                    implicitWidth: contentReady ? contentLoader.item?.implicitWidth ?? 100 : 100
-                    implicitHeight: contentReady ? contentLoader.item?.implicitHeight ?? 100 : 100
+                    // Use the live size so both explicit and implicit content resizing repositions the popup.
+                    implicitWidth: contentLoader.item?.width ?? 0
+                    implicitHeight: contentLoader.item?.height ?? 0
 
                     x: popoverPopup.leftPadding
                     y: popoverPopup.topPadding
