@@ -21,6 +21,10 @@ Singleton {
     function defaults() {
         return {
             locale: "en_US",
+            time: {
+                dateFormat: "dd/MM/yyyy",
+                timeFormat: "24h"
+            },
             appearance: {
                 position: "bottom",
                 popoverOffset: 8
@@ -41,6 +45,8 @@ Singleton {
 
     readonly property var validators: ({
             "locale": (value, fallback, key) => readChoice(value, fallback, key, ["en_US", "uk_UA"]),
+            "time.dateFormat": readString,
+            "time.timeFormat": (value, fallback, key) => readChoice(value, fallback, key, ["12h", "24h"]),
             "appearance.position": (value, fallback, key) => readChoice(value, fallback, key, ["top", "bottom", "left", "right"]),
             "appearance.popoverOffset": readNumber,
             "workspaces": readPathMap,
