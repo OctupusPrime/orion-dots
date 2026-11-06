@@ -11,21 +11,47 @@ ColumnLayout {
     readonly property var locale: Qt.locale(UserSettings.values.locale)
 
     readonly property bool isRow: shellPosition.direction === "row"
+    readonly property bool is12Hour: timeSettings.timeFormat === "12h"
 
-    readonly property string timeFormat: {
-        if (timeSettings.timeFormat === "12h")
-            return isRow ? "hh:mm AP" : "hh\nmm\nAP";
+    readonly property string timeText: {
+        if (is12Hour)
+            return SystemService.date.toLocaleTimeString(locale, isRow ? "hh:mm" : "hh\nmm");
 
-        return isRow ? "HH:mm" : "HH\nmm";
+        return SystemService.date.toLocaleTimeString(locale, isRow ? "HH:mm" : "HH\nmm");
     }
+    readonly property string periodText: SystemService.date.toLocaleTimeString(locale, "AP")
 
     spacing: -2
 
-    QsText {
-        text: SystemService.date.toLocaleTimeString(timeModuleRoot.locale, timeModuleRoot.timeFormat)
-        fontWeight: 600
-        horizontalAlignment: timeModuleRoot.isRow ? Text.AlignRight : Text.AlignHCenter
+    GridLayout {
+        columns: timeModuleRoot.isRow ? 2 : 1
+        columnSpacing: 4
+        rowSpacing: 0
         Layout.alignment: timeModuleRoot.isRow ? Qt.AlignRight : Qt.AlignHCenter
+
+        QsText {
+            text: timeModuleRoot.timeText
+            textFormat: Text.PlainText
+            fontWeight: 600
+            font.features: {
+                "tnum": 1
+            }
+            horizontalAlignment: timeModuleRoot.isRow ? Text.AlignRight : Text.AlignHCenter
+            Layout.alignment: timeModuleRoot.isRow ? Qt.AlignBaseline : Qt.AlignHCenter
+        }
+
+        QsText {
+            visible: timeModuleRoot.is12Hour
+            text: timeModuleRoot.periodText
+            textFormat: Text.PlainText
+            fontSize: 14
+            fontWeight: 600
+            font.features: {
+                "tnum": 1
+            }
+            horizontalAlignment: Text.AlignHCenter
+            Layout.alignment: timeModuleRoot.isRow ? Qt.AlignBaseline : Qt.AlignHCenter
+        }
     }
 
     QsText {

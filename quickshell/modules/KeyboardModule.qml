@@ -12,5 +12,8 @@ QsText {
     text: HyprlandService.keyboardLang
     fontSize: 14
     fontWeight: 600
+    font.features: {
+        "tnum": 1
+    }
     horizontalAlignment: Text.AlignHCenter
 }
