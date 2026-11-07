@@ -67,6 +67,8 @@ ShellRoot {
                     anchors {
                         leftMargin: 2
                         topMargin: 2
+                        horizontalCenterOffset: shellPosition.horizontalContentOffset
+                        verticalCenterOffset: shellPosition.verticalContentOffset
                     }
 
                     // Apply anchors together so changing orientation cannot stretch the grid.
@@ -103,7 +105,11 @@ ShellRoot {
                     rowSpacing: 14
                     columnSpacing: 14
 
-                    anchors.centerIn: parent
+                    anchors {
+                        centerIn: parent
+                        horizontalCenterOffset: shellPosition.horizontalContentOffset
+                        verticalCenterOffset: shellPosition.verticalContentOffset
+                    }
 
                     SystemMenuModule {
                         Layout.alignment: Qt.AlignCenter
@@ -128,6 +134,8 @@ ShellRoot {
                     anchors {
                         rightMargin: 2
                         bottomMargin: 2
+                        horizontalCenterOffset: shellPosition.horizontalContentOffset
+                        verticalCenterOffset: shellPosition.verticalContentOffset
                     }
 
                     state: panel.isRow ? "row" : "column"
