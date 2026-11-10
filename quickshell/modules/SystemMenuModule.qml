@@ -108,6 +108,7 @@ QsPopover {
             property int margin: 4
 
             anchors.fill: parent
+            clip: true
 
             topMargin: margin
             bottomMargin: margin

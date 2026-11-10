@@ -96,6 +96,10 @@ ShellRoot {
                             }
                         }
                     ]
+
+                    NetworkModule {
+                        Layout.alignment: Qt.AlignCenter
+                    }
                 }
 
                 GridLayout {

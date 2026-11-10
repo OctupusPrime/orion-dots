@@ -20,6 +20,17 @@ QtObject {
                 },
                 appsTray: {
                     back: "Back"
+                },
+                network: {
+                    wifi: "Wi-Fi",
+                    ethernet: "Ethernet",
+                    connected: "Connected",
+                    connectedSignal: "Connected {{strength}}/100",
+                    disconnected: "Disconnected",
+                    noConnection: "No network adapters found.\nConnect a Wi-Fi or Ethernet adapter.",
+                    limitedConnectivity: "Limited connectivity",
+                    limitedConnectivityDescription: "Internet access is limited. This network may require you to sign in.",
+                    openLoginPage: "Open login page"
                 }
             },
             uk_UA: {
@@ -35,6 +46,17 @@ QtObject {
                 },
                 appsTray: {
                     back: "Назад"
+                },
+                network: {
+                    wifi: "Wi-Fi",
+                    ethernet: "Ethernet",
+                    connected: "Підключено",
+                    connectedSignal: "Підключено {{strength}}/100",
+                    disconnected: "Не підключено",
+                    noConnection: "Немає мережевих адаптерів.\nПід’єднайте Wi-Fi або Ethernet.",
+                    limitedConnectivity: "Обмежене підключення",
+                    limitedConnectivityDescription: "Доступ до інтернету обмежено. Можливо, ця мережа потребує входу.",
+                    openLoginPage: "Відкрити сторінку входу"
                 }
             }
         })
